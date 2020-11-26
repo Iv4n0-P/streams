@@ -9,6 +9,7 @@ import {
 } from './types'
 //čisto smo stringove stavili u varijablu i izvadili u poseban file da imamo tipove na jednom mjestu a to sve zbog toga što se često falije upisat tip pa ćemo ovako dobivat error, opcionalno, mogli smo dole samo stavit string 'SIGN_IN'/'SIGN_OUT'
 import streams from '../apis/streams'
+import history from '../history'
 
 export const signIn = (userId) => {
     return {
@@ -28,6 +29,8 @@ export const createStream = formValues => async (dispatch, getState) => { //treb
     //ovaj post request će vratit u responsu podatke koji nam trebaju, ako smo postali na /streams će dat sve streamove nakon što ubaci novi, više u ss redux form json server rest nešto
     const response = await streams.post('/streams', { ...formValues, userId})
     dispatch({ type: CREATE_STREAM, payload: response.data})
+    //i sad ćemo reedirektirat usera na home, kad se sve obavilo, ne u komponenti kad je okinio action creatora, jer možemo dobit neku grešku kad radimo api request a to korisnik nebi nikad znao. Tek kad je sve gotov, redirektiramo ga
+   history.push('/')
 }
 //dakle kad napravit http request, ajax request, on dobije i odgovor
 export const fetchStreams = () => async dispatch => {
